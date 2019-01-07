@@ -8,6 +8,7 @@
     var preblock = "2o$o!"; // pre block 3
     var zap = "o$2o$bo!"; // creates a boat(6) costs:4
     var blinker = "3o!";
+    var spawnFour = "bo$obo$obo$obo$bo!";
 
 
     function getRnd(min, max) {
@@ -17,7 +18,7 @@
     function registerArmy() {
         window.registerArmy({
             name: 'DevOps Giants',
-            icon: 'gladiator',
+            icon: 'knight',
             cb: cb
         });
     }
@@ -46,8 +47,10 @@
             plan = ['fence', 'spaceship'];
         } else if (data.generation < 440) {
             plan = ['fence'];
-        } else {
+        } else if (data.generation % 5) {
             plan = ['spaceship'];
+        } else {
+            plan = ['glider'];
         }
         planIndex = planIndex % plan.length;
         if (plan[planIndex] === 'mine') {
@@ -55,7 +58,7 @@
         } else if (plan[planIndex] === 'fence') {
             pixels = tryPlaceFence(data);
         } else if (plan[planIndex] === 'glider') {
-            pixels = tryPlaceRle(data, rGlider, 5);
+            pixels = tryPlaceRle(data, rGlider);
         } else if (plan[planIndex] === 'spaceship') {
             pixels = tryPlaceRle(data, spaceShip, 9);
         }
@@ -71,7 +74,7 @@
         var r, c;
         c = col || fenceLocation;
         r = row || data.rows - fenceRow;
-        pixels = tryPlaceRle(data, blinker, 3, c, r);
+        pixels = tryPlaceRle(data, spawnFour, 3, c, r);
 
         if (pixels.length > 0)
             fenceLocation += 10;
