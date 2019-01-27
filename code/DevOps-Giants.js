@@ -8,7 +8,14 @@
     var preblock = "2o$o!"; // pre block 3
     var zap = "o$2o$bo!"; // creates a boat(6) costs:4
     var blinker = "3o!";
-    var spawnFour = "bo$obo$obo$obo$bo!";
+    var fourBoats = "$2bo$bobo$bobo$2bo$2bo!";
+    var boat = "$b4o!";
+    var trafficLights = "bo$2o$bo!";
+    var LinePointer = "$b47o$b2obobobobobobobobobobobobobobobobobobobobobob2o!"; // line which is pointing forward
+    var Metushelach = "2bo$bobo$bo$o!";
+    var oneDot = "$bo!";
+
+
 
 
     function getRnd(min, max) {
@@ -23,17 +30,7 @@
         });
     }
 
-    function getRandom() {
-        return Math.random();
-    }
     setTimeout(registerArmy, 0);
-
-    var plan = {
-        ongoing: [
-            'spaceShip',
-        ]
-    };
-
 
     function cb(data) {
         var pixels = [];
@@ -44,23 +41,31 @@
             fenceRow = 15;
         }
         if (data.generation < 200) {
-            plan = ['fence', 'spaceship'];
-        } else if (data.generation < 440) {
+            plan = ['trafficLights', 'Rspaceship'];
+        } else if (data.generation < 600) {
             plan = ['fence'];
         } else if (data.generation % 5) {
-            plan = ['spaceship'];
+            plan = ['Lspaceship'];
+        } else if (data.generation % 4) {
+            plan = ['Lspaceship'];
         } else {
-            plan = ['glider'];
+            plan = ['rglider'];
         }
         planIndex = planIndex % plan.length;
-        if (plan[planIndex] === 'mine') {
-            pixels = tryPlaceRle(data, preblock, 3);
+        if (plan[planIndex] === 'boat') {
+            pixels = tryPlaceRle(data, boat, 4);
         } else if (plan[planIndex] === 'fence') {
             pixels = tryPlaceFence(data);
-        } else if (plan[planIndex] === 'glider') {
-            pixels = tryPlaceRle(data, rGlider);
-        } else if (plan[planIndex] === 'spaceship') {
-            pixels = tryPlaceRle(data, spaceShip, 9);
+        } else if (plan[planIndex] === 'lglider') {
+            pixels = tryPlaceRle(data, lGlider, 4, getRnd(0,data.cols), 0);
+        } else if (plan[planIndex] === 'rglider') {
+            pixels = tryPlaceRle(data, rGlider, 4, getRnd(0,data.cols), 0);
+        } else if (plan[planIndex] === 'Rspaceship') {
+            pixels = tryPlaceRle(data, spaceShip, 15, getRnd(data.cols/2, 3*data.cols/4),0);
+        } else if (plan[planIndex] === 'Lspaceship') {
+            pixels = tryPlaceRle(data, spaceShip, 15, getRnd(data.cols/4, data.cols/2),0);
+        } else if (plan[planIndex] === 'trafficLights') {
+            pixels = tryPlaceRle(data, trafficLights, 3, getRnd(0,data.cols/2), getRnd(0,data.rows/2));
         }
 
         if (pixels.length > 0) {
@@ -71,17 +76,18 @@
 
     function tryPlaceFence(data, col, row) {
         var pixels = [];
+        // var fenceRow = data.rows - 15;
         var r, c;
         c = col || fenceLocation;
         r = row || data.rows - fenceRow;
-        pixels = tryPlaceRle(data, spawnFour, 3, c, r);
+        pixels = tryPlaceRle(data, fourBoats, 5, c, r);
 
         if (pixels.length > 0)
-            fenceLocation += 10;
+            fenceLocation += 8;
 
         if (fenceLocation > data.cols - 2) {
             fenceLocation = 0;
-            fenceRow += 10;
+            fenceRow += 15;
         }
         return pixels;
     }
@@ -91,13 +97,25 @@
 
         if (data.budget >= neededBudget) {
             c = (col === 0) ? 0 : col || getRnd(0, data.cols - 2);
-            r = (row === 0) ? 0 : row || getRnd(20, 80);
+            r = (row === 0) ? 0 : row || getRnd(0, 30);
             pixels = getPixelsFromRle(rle, c, r);
         }
       
         return pixels;
     }
 
+    function lineOfDeath(data,row) {
+        var pixels = [];
+        if (data.budget >= (data.cols + (data.cols % 17) + 10)) {
+            for (i = 0 ; i <= (data.cols) ; i++) {
+                pixels.push([i,row]);
+                if((i % 17) === 0) {
+                    pixels.push([i,row+1]);
+                }
+            }
+        }
+        return pixels;
+    }
 
     function getPixelsFromRle(rle, c, r, pixels) {
         var pixels = [];
