@@ -2,7 +2,7 @@
 ![code war image](https://github.com/codearmada/codewar2019/blob/master/sample.gif "code war!")
 
 A CodeWar bot game based on Conway's game of life.
-Conway rules II
+Conway rules III
 
 ## Installing the developer environment:
 * [Download NodeJS](https://nodejs.org/en/download/)
