@@ -8,7 +8,7 @@ Conway rules II
 * [Download NodeJS](https://nodejs.org/en/download/)
 * Install [git](https://git-scm.com/downloads)
 * In cmdline/bash run:
-
+* dotan change test
   **git clone https://github.com/amitbet/codewar2019.git**
 * Install node-static globally (install.cmd or install.sh script)
 * Run the (run.cmd / run.sh) script
